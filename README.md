@@ -1,5 +1,12 @@
 ## calculator
 
+```
+app name: Calculator
+package name: app.cortena.calculator
+package version: 1.0.0
+path: packages/apps/calculator
+```
+
 ## license
 
 ```
