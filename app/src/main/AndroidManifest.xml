@@ -19,7 +19,7 @@
         android:supportsRtl="true">
 
         <activity
-            android:name="app.cortena.calculator.MainActivity"
+            android:name="app.cortena.calculator.CalculatorActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
