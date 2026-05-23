@@ -13,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import framework.cortena.ui.components.Button
 import framework.cortena.ui.components.ButtonStyle
@@ -58,22 +60,22 @@ import framework.cortena.ui.theme.LocalSpacing
  *   that the 4dp grid produces comfortable grid spacing.
  * - **Icon inside Button**: The backspace key places a Material [Icon] inside [Button] — validates
  *   the content-scaling contract (icon auto-sizes to the button's tier).
- * - **Weight-based layout**: The "0" key spans 2 columns via `weight(2f)` — validates that Button
- *   stretches gracefully under flexible width constraints.
+ * - **Dynamic label**: AC/C toggles based on [hasInput] — validates that stateful label changes
+ *   integrate cleanly with CortenaUI's Button recomposition.
  *
  * Layout:
  * ```
  * ┌──────┬──────┬──────┬──────┐
- * │  AC  │  ⌫  │   %  │   ÷  │
+ * │  ⌫   │  AC  │   %  │   ÷  │
  * ├──────┼──────┼──────┼──────┤
  * │  7   │  8   │   9  │   ×  │
  * ├──────┼──────┼──────┼──────┤
  * │  4   │  5   │   6  │   −  │
  * ├──────┼──────┼──────┼──────┤
  * │  1   │  2   │   3  │   +  │
- * ├──────┴──────┼──────┼──────┤
- * │      0      │   .  │   =  │
- * └─────────────┴──────┴──────┘
+ * ├──────┼──────┼──────┼──────┤
+ * │ +/-  │  0   │   ,  │   =  │
+ * └──────┴──────┴──────┴──────┘
  * ```
  */
 @Composable
@@ -82,24 +84,24 @@ fun Keypad(
     onOperator: (Char) -> Unit,
     onEquals: () -> Unit,
     onClear: () -> Unit,
+    onClearEntry: () -> Unit,
     onBackspace: () -> Unit,
     onDecimal: () -> Unit,
     onPercent: () -> Unit,
+    onNegate: () -> Unit,
+    hasInput: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
     val gap = spacing.Sm.dp // 8dp — consistent grid gap
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(gap)) {
-        // Row 1: AC, ⌫, %, ÷
+        // Row 1: ⌫, AC/C, %, ÷
         KeyRow(gap) {
-            UtilityKey(label = "AC", onClick = onClear, modifier = Modifier.weight(1f))
             Button(
                 onClick = onBackspace,
                 iconOnly = true,
-                style = ButtonStyle.Secondary,
-                variant = ButtonVariant.Soft,
-                size = SizeToken.Large,
+                style = ButtonStyle.Ghost,
                 modifier = Modifier.weight(1f).aspectRatio(1f),
             ) {
                 Icon(
@@ -107,6 +109,11 @@ fun Keypad(
                     contentDescription = "Backspace",
                 )
             }
+            UtilityKey(
+                label = if (hasInput) "C" else "AC",
+                onClick = if (hasInput) onClearEntry else onClear,
+                modifier = Modifier.weight(1f),
+            )
             UtilityKey(label = "%", onClick = onPercent, modifier = Modifier.weight(1f))
             OperatorKey(label = "÷", onClick = { onOperator('÷') }, modifier = Modifier.weight(1f))
         }
@@ -135,12 +142,23 @@ fun Keypad(
             OperatorKey(label = "+", onClick = { onOperator('+') }, modifier = Modifier.weight(1f))
         }
 
-        // Row 5: 0 (2×), ., =
+        // Row 5: +/-, 0, comma, =
         KeyRow(gap) {
-            // "0" spans 2 columns — validates Button under weight(2f).
-            NumberKey(digit = '0', onClick = onDigit, modifier = Modifier.weight(2f), wide = true)
-            NumberKey(digit = '.', onClick = { onDecimal() }, modifier = Modifier.weight(1f))
-            EqualsKey(onClick = onEquals, modifier = Modifier.weight(1f))
+            Button(
+                onClick = onNegate,
+                style = ButtonStyle.Secondary,
+                variant = ButtonVariant.Soft,
+                modifier = Modifier.weight(1f).aspectRatio(1f),
+            ) {
+                Text(
+                    text = "+/−",
+                    role = TextRole.HeadlineLarge,
+                    style = TextStyle(fontWeight = FontWeight(400)),
+                )
+            }
+            NumberKey(digit = '0', onClick = onDigit, modifier = Modifier.weight(1f))
+            NumberKey(digit = ',', onClick = { onDecimal() }, modifier = Modifier.weight(1f))
+            OperatorKey(label = "=", onClick = { onEquals() }, modifier = Modifier.weight(1f))
         }
     }
 }
@@ -163,58 +181,41 @@ private fun KeyRow(
 
 /** Number key: Ghost style — subdued background, lets the digit stand out. */
 @Composable
-private fun NumberKey(
-    digit: Char,
-    onClick: (Char) -> Unit,
-    modifier: Modifier = Modifier,
-    wide: Boolean = false,
-) {
+private fun NumberKey(digit: Char, onClick: (Char) -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = { onClick(digit) },
-        style = ButtonStyle.Ghost,
-        size = SizeToken.Large,
-        modifier = if (wide) modifier else modifier.aspectRatio(1f),
+        style = ButtonStyle.Secondary,
+        variant = ButtonVariant.Soft,
+        modifier = modifier.aspectRatio(1f),
     ) {
-        Text(text = digit.toString(), role = TextRole.TitleMedium)
+        Text(
+            text = digit.toString(),
+            role = TextRole.HeadlineLarge,
+            style = TextStyle(fontWeight = FontWeight(400)),
+        )
     }
 }
 
 /** Operator key: Accent style — visually prominent, draws the eye. */
 @Composable
 private fun OperatorKey(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(
-        onClick = onClick,
-        style = ButtonStyle.Accent,
-        size = SizeToken.Large,
-        modifier = modifier.aspectRatio(1f),
-    ) {
-        Text(text = label, role = TextRole.TitleMedium)
+    Button(onClick = onClick, style = ButtonStyle.Accent, modifier = modifier.aspectRatio(1f)) {
+        Text(
+            text = label,
+            role = TextRole.HeadlineLarge,
+            style = TextStyle(fontWeight = FontWeight(400)),
+        )
     }
 }
 
 /** Utility key (AC, %): Secondary Soft — present but not dominant. */
 @Composable
 private fun UtilityKey(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(
-        onClick = onClick,
-        style = ButtonStyle.Secondary,
-        variant = ButtonVariant.Soft,
-        size = SizeToken.Large,
-        modifier = modifier.aspectRatio(1f),
-    ) {
-        Text(text = label, role = TextRole.TitleMedium)
-    }
-}
-
-/** Equals key: Primary style — the main action of the keypad. */
-@Composable
-private fun EqualsKey(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(
-        onClick = onClick,
-        style = ButtonStyle.Primary,
-        size = SizeToken.Large,
-        modifier = modifier.aspectRatio(1f),
-    ) {
-        Text(text = "=", role = TextRole.TitleMedium)
+    Button(onClick = onClick, style = ButtonStyle.Ghost, modifier = modifier.aspectRatio(1f)) {
+        Text(
+            text = label,
+            role = TextRole.HeadlineLarge,
+            style = TextStyle(fontWeight = FontWeight(400)),
+        )
     }
 }

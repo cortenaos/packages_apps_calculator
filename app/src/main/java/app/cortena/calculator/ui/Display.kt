@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import framework.cortena.ui.components.Text
@@ -63,7 +65,8 @@ fun Display(expression: String, display: String, modifier: Modifier = Modifier) 
             if (expression.isNotEmpty()) {
                 Text(
                     text = expression,
-                    role = TextRole.BodyLarge,
+                    role = TextRole.HeadlineLarge,
+                    style = TextStyle(fontWeight = FontWeight(400)),
                     color = Color(colors.onSurfaceVariant),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -79,6 +82,7 @@ fun Display(expression: String, display: String, modifier: Modifier = Modifier) 
             Text(
                 text = display,
                 role = TextRole.DisplayLarge,
+                style = TextStyle(fontWeight = FontWeight(400)),
                 color = Color(colors.onBackground),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

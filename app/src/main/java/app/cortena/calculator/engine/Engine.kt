@@ -44,14 +44,26 @@ class Engine {
 
     fun onDecimal() {
         if (evaluated) {
-            state = State(display = "0.")
+            state = State(display = "0,")
             evaluated = false
             return
         }
-        if ('.' !in state.display) {
-            state = state.copy(display = state.display + ".")
+        if (',' !in state.display) {
+            state = state.copy(display = state.display + ",")
         }
     }
+
+    // Negate (+/-)
+    fun onNegate() {
+        val current = state.display
+        if (current == "0") return
+        val next = if (current.startsWith("-")) current.drop(1) else "-$current"
+        state = state.copy(display = next)
+    }
+
+    /** Whether the user has entered any input (display ≠ initial "0" or expression is active). */
+    val hasInput: Boolean
+        get() = state.display != "0" || state.expression.isNotEmpty()
 
     // Operators
     fun onOperator(op: Char) {
@@ -71,7 +83,7 @@ class Engine {
 
     // Percent
     fun onPercent() {
-        val value = state.display.toDoubleOrNull() ?: return
+        val value = state.display.replace(',', '.').toDoubleOrNull() ?: return
         val result = value / 100.0
         state = state.copy(display = formatResult(result))
         evaluated = false
@@ -79,7 +91,7 @@ class Engine {
 
     // Equals
     fun onEquals() {
-        val fullExpr = state.expression + state.display
+        val fullExpr = state.expression + state.display.replace(',', '.')
         if (fullExpr.isEmpty()) return
 
         val result = evaluate(fullExpr)
@@ -102,6 +114,12 @@ class Engine {
         val current = state.display
         val next = current.dropLast(1)
         state = state.copy(display = if (next.isEmpty() || next == "-") "0" else next)
+    }
+
+    /** Clears only the current entry (display), keeping the expression. */
+    fun onClearEntry() {
+        state = state.copy(display = "0")
+        evaluated = false
     }
 
     /**
@@ -169,7 +187,7 @@ class Engine {
             value.toLong().toString()
         } else {
             // Cap to 10 decimal places to avoid floating-point noise.
-            "%.10g".format(value).trimEnd('0').trimEnd('.')
+            "%.10g".format(value).trimEnd('0').trimEnd('.').replace('.', ',')
         }
     }
 }
