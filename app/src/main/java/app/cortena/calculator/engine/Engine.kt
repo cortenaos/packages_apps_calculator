@@ -28,6 +28,14 @@ class Engine {
     /** True when the last action was an operator, so the next digit replaces "0". */
     private var operatorJustPressed = false
 
+    companion object {
+        /** Maximum number of digit characters allowed in a single operand. */
+        const val MAX_DIGITS = 9
+    }
+
+    /** Counts only digit characters in the display (excludes minus, comma, dots). */
+    private fun digitCount(display: String): Int = display.count { it.isDigit() }
+
     // Digit & Decimal
     fun onDigit(digit: Char) {
         if (evaluated) {
@@ -44,6 +52,8 @@ class Engine {
         }
 
         val current = state.display
+        // Guard: max 9 digits per operand.
+        if (digitCount(current) >= MAX_DIGITS) return
         val next = if (current == "0") digit.toString() else current + digit
         state = state.copy(display = next, activeOperator = null)
     }
@@ -138,7 +148,7 @@ class Engine {
         val fullExpr = state.expression + displayToInternal(state.display)
 
         val result = evaluate(fullExpr)
-        state = State(expression = fullExpr + "=", display = formatResult(result))
+        state = State(expression = "$fullExpr=", display = formatResult(result))
         evaluated = true
         operatorJustPressed = false
     }
@@ -172,8 +182,12 @@ class Engine {
         operatorJustPressed = false
     }
 
-    /** Converts display string (with commas) to internal format (with dots) for arithmetic. */
-    private fun displayToInternal(display: String): String = display.replace(',', '.')
+    /**
+     * Converts display string to internal format for arithmetic. Strips thousand-separator dots and
+     * converts decimal comma to dot.
+     */
+    private fun displayToInternal(display: String): String =
+        display.replace(".", "").replace(',', '.')
 
     /**
      * Tokenizes the expression into numbers and operators, then evaluates with standard arithmetic
@@ -216,21 +230,22 @@ class Engine {
         val buffer = StringBuilder()
 
         for ((index, ch) in expr.withIndex()) {
-            when {
-                ch in "+-×÷" && buffer.isNotEmpty() -> {
+            when (ch) {
+                in "+-×÷" if buffer.isNotEmpty() -> {
                     result.add(buffer.toString())
                     result.add(ch.toString())
                     buffer.clear()
                 }
                 // Leading minus at index 0 is part of the number, not an operator
-                ch == '-' &&
-                    buffer.isEmpty() &&
-                    (index == 0 || result.lastOrNull() in listOf("+", "-", "×", "÷")) -> {
+                '-' if buffer.isEmpty() &&
+                        (index == 0 || result.lastOrNull() in listOf("+", "-", "×", "÷")) -> {
                     buffer.append(ch)
                 }
-                ch == '=' -> {
+
+                '=' -> {
                     // Trailing "=" from the expression — ignore.
                 }
+
                 else -> buffer.append(ch)
             }
         }
