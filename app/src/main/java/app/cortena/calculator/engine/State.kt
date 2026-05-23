@@ -54,4 +54,14 @@ data class State(
 
             return (if (negative) "-" else "") + formatted + decPart
         }
+
+    /**
+     * Expression with spaces around operators for readability.
+     *
+     * Examples:
+     * - "12+34" → "12 + 34"
+     * - "12+34×5=" → "12 + 34 × 5 ="
+     */
+    val formattedExpression: String
+        get() = expression.replace(Regex("([+\\-×÷=])")) { " ${it.value} " }.trim()
 }

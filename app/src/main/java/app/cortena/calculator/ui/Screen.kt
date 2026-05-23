@@ -51,7 +51,7 @@ fun Screen(engine: Engine) {
     ) {
         // Display area (flex: takes remaining vertical space)
         Display(
-            expression = state.expression,
+            expression = state.formattedExpression,
             display = state.formattedDisplay,
             modifier = Modifier.weight(1f),
         )
