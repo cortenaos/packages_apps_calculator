@@ -76,13 +76,13 @@ fun Display(expression: String, display: String, modifier: Modifier = Modifier) 
             }
 
             // Primary display (result / current input)
-            // TODO: CortenaUI — AnimatedText / digit-transition utility would
-            //  enhance the display. Currently, value changes snap without
-            //  transition. A crossfade or rolling-digit animation at the
-            //  framework level would benefit calculator, clock, and counter UIs.
             Text(
                 text = display,
-                style = TextStyle(fontWeight = FontWeight(400), fontSize = 72.sp),
+                style =
+                    TextStyle(
+                        fontWeight = FontWeight(400),
+                        fontSize = 67.38.sp,
+                    ), // DisplayLarge x 1.437
                 color = Color(colors.onBackground),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

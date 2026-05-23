@@ -189,7 +189,7 @@ private fun NumberKey(digit: Char, onClick: (Char) -> Unit, modifier: Modifier =
     ) {
         Text(
             text = digit.toString(),
-            role = TextRole.HeadlineSmall,
+            role = TextRole.DisplayMedium,
             style = TextStyle(fontWeight = FontWeight(400)),
         )
     }
@@ -201,7 +201,7 @@ private fun OperatorKey(label: String, onClick: () -> Unit, modifier: Modifier =
     Button(onClick = onClick, style = ButtonStyle.Accent, modifier = modifier.aspectRatio(1f)) {
         Text(
             text = label,
-            role = TextRole.HeadlineSmall,
+            role = TextRole.DisplayMedium,
             style = TextStyle(fontWeight = FontWeight(400)),
         )
     }
@@ -213,7 +213,7 @@ private fun UtilityKey(label: String, onClick: () -> Unit, modifier: Modifier = 
     Button(onClick = onClick, style = ButtonStyle.Ghost, modifier = modifier.aspectRatio(1f)) {
         Text(
             text = label,
-            role = TextRole.HeadlineSmall,
+            role = TextRole.DisplayMedium,
             style = TextStyle(fontWeight = FontWeight(400)),
         )
     }
