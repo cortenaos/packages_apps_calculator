@@ -7,6 +7,7 @@ package app.cortena.calculator.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import framework.cortena.ui.components.Button
 import framework.cortena.ui.components.ButtonStyle
@@ -93,7 +95,7 @@ fun Keypad(
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
-    val gap = spacing.Sm.dp // 8dp — consistent grid gap
+    val gap = spacing.Sm.dp
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(gap)) {
         // Row 1: ⌫, AC/C, %, ÷
@@ -168,10 +170,7 @@ fun Keypad(
  * the individual keys.
  */
 @Composable
-private fun KeyRow(
-    gap: androidx.compose.ui.unit.Dp,
-    content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit,
-) {
+private fun KeyRow(gap: Dp, content: @Composable RowScope.() -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(gap),
@@ -190,7 +189,7 @@ private fun NumberKey(digit: Char, onClick: (Char) -> Unit, modifier: Modifier =
     ) {
         Text(
             text = digit.toString(),
-            role = TextRole.HeadlineLarge,
+            role = TextRole.HeadlineSmall,
             style = TextStyle(fontWeight = FontWeight(400)),
         )
     }
@@ -202,7 +201,7 @@ private fun OperatorKey(label: String, onClick: () -> Unit, modifier: Modifier =
     Button(onClick = onClick, style = ButtonStyle.Accent, modifier = modifier.aspectRatio(1f)) {
         Text(
             text = label,
-            role = TextRole.HeadlineLarge,
+            role = TextRole.HeadlineSmall,
             style = TextStyle(fontWeight = FontWeight(400)),
         )
     }
@@ -214,7 +213,7 @@ private fun UtilityKey(label: String, onClick: () -> Unit, modifier: Modifier = 
     Button(onClick = onClick, style = ButtonStyle.Ghost, modifier = modifier.aspectRatio(1f)) {
         Text(
             text = label,
-            role = TextRole.HeadlineLarge,
+            role = TextRole.HeadlineSmall,
             style = TextStyle(fontWeight = FontWeight(400)),
         )
     }

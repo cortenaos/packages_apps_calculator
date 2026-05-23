@@ -17,6 +17,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import framework.cortena.ui.components.Text
 import framework.cortena.ui.components.TextRole
 import framework.cortena.ui.theme.LocalColors
@@ -65,7 +66,7 @@ fun Display(expression: String, display: String, modifier: Modifier = Modifier) 
             if (expression.isNotEmpty()) {
                 Text(
                     text = expression,
-                    role = TextRole.HeadlineLarge,
+                    role = TextRole.HeadlineMedium,
                     style = TextStyle(fontWeight = FontWeight(400)),
                     color = Color(colors.onSurfaceVariant),
                     maxLines = 1,
@@ -81,8 +82,7 @@ fun Display(expression: String, display: String, modifier: Modifier = Modifier) 
             //  framework level would benefit calculator, clock, and counter UIs.
             Text(
                 text = display,
-                role = TextRole.DisplayLarge,
-                style = TextStyle(fontWeight = FontWeight(400)),
+                style = TextStyle(fontWeight = FontWeight(400), fontSize = 72.sp),
                 color = Color(colors.onBackground),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
