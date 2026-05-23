@@ -68,6 +68,7 @@ fun Screen(engine: Engine) {
             onPercent = engine::onPercent,
             onNegate = engine::onNegate,
             hasInput = engine.hasInput,
+            activeOperator = state.activeOperator,
             modifier = Modifier.padding(horizontal = spacing.Md.dp),
         )
     }

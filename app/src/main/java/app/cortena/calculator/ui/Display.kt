@@ -66,7 +66,7 @@ fun Display(expression: String, display: String, modifier: Modifier = Modifier) 
             if (expression.isNotEmpty()) {
                 Text(
                     text = expression,
-                    role = TextRole.HeadlineMedium,
+                    role = TextRole.TitleLarge,
                     style = TextStyle(fontWeight = FontWeight(400)),
                     color = Color(colors.onSurfaceVariant),
                     maxLines = 1,

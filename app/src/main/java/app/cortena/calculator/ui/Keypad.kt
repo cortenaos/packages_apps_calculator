@@ -25,6 +25,7 @@ import framework.cortena.ui.components.Icon
 import framework.cortena.ui.components.Text
 import framework.cortena.ui.components.TextRole
 import framework.cortena.ui.size.SizeToken
+import framework.cortena.ui.theme.LocalColors
 import framework.cortena.ui.theme.LocalSpacing
 
 // TODO: CortenaUI Framework Gap — Grid Layout Abstraction
@@ -92,6 +93,7 @@ fun Keypad(
     onPercent: () -> Unit,
     onNegate: () -> Unit,
     hasInput: Boolean,
+    activeOperator: Char?,
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
@@ -117,7 +119,12 @@ fun Keypad(
                 modifier = Modifier.weight(1f),
             )
             UtilityKey(label = "%", onClick = onPercent, modifier = Modifier.weight(1f))
-            OperatorKey(label = "÷", onClick = { onOperator('÷') }, modifier = Modifier.weight(1f))
+            OperatorKey(
+                label = "÷",
+                onClick = { onOperator('÷') },
+                isActive = activeOperator == '÷',
+                modifier = Modifier.weight(1f),
+            )
         }
 
         // Row 2: 7, 8, 9, ×
@@ -125,7 +132,12 @@ fun Keypad(
             NumberKey(digit = '7', onClick = onDigit, modifier = Modifier.weight(1f))
             NumberKey(digit = '8', onClick = onDigit, modifier = Modifier.weight(1f))
             NumberKey(digit = '9', onClick = onDigit, modifier = Modifier.weight(1f))
-            OperatorKey(label = "×", onClick = { onOperator('×') }, modifier = Modifier.weight(1f))
+            OperatorKey(
+                label = "×",
+                onClick = { onOperator('×') },
+                isActive = activeOperator == '×',
+                modifier = Modifier.weight(1f),
+            )
         }
 
         // Row 3: 4, 5, 6, −
@@ -133,7 +145,12 @@ fun Keypad(
             NumberKey(digit = '4', onClick = onDigit, modifier = Modifier.weight(1f))
             NumberKey(digit = '5', onClick = onDigit, modifier = Modifier.weight(1f))
             NumberKey(digit = '6', onClick = onDigit, modifier = Modifier.weight(1f))
-            OperatorKey(label = "−", onClick = { onOperator('-') }, modifier = Modifier.weight(1f))
+            OperatorKey(
+                label = "−",
+                onClick = { onOperator('-') },
+                isActive = activeOperator == '-',
+                modifier = Modifier.weight(1f),
+            )
         }
 
         // Row 4: 1, 2, 3, +
@@ -141,7 +158,12 @@ fun Keypad(
             NumberKey(digit = '1', onClick = onDigit, modifier = Modifier.weight(1f))
             NumberKey(digit = '2', onClick = onDigit, modifier = Modifier.weight(1f))
             NumberKey(digit = '3', onClick = onDigit, modifier = Modifier.weight(1f))
-            OperatorKey(label = "+", onClick = { onOperator('+') }, modifier = Modifier.weight(1f))
+            OperatorKey(
+                label = "+",
+                onClick = { onOperator('+') },
+                isActive = activeOperator == '+',
+                modifier = Modifier.weight(1f),
+            )
         }
 
         // Row 5: +/-, 0, comma, =
@@ -195,10 +217,27 @@ private fun NumberKey(digit: Char, onClick: (Char) -> Unit, modifier: Modifier =
     }
 }
 
-/** Operator key: Accent style — visually prominent, draws the eye. */
+/** Operator key: Accent style — visually prominent, draws the eye. Swaps fg/bg when active. */
 @Composable
-private fun OperatorKey(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(onClick = onClick, style = ButtonStyle.Accent, modifier = modifier.aspectRatio(1f)) {
+private fun OperatorKey(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isActive: Boolean = false,
+) {
+    val colors = LocalColors.current
+    Button(
+        onClick = onClick,
+        style = ButtonStyle.Accent,
+        // When active: white bg + accent(orange) fg. Normal: uses default Accent colors.
+        background =
+            if (isActive) androidx.compose.ui.graphics.Color.White
+            else androidx.compose.ui.graphics.Color.Unspecified,
+        foreground =
+            if (isActive) androidx.compose.ui.graphics.Color(colors.accent)
+            else androidx.compose.ui.graphics.Color.Unspecified,
+        modifier = modifier.aspectRatio(1f),
+    ) {
         Text(
             text = label,
             role = TextRole.DisplayMedium,
