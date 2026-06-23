@@ -62,7 +62,6 @@ fun Screen(engine: Engine) {
             onOperator = engine::onOperator,
             onEquals = engine::onEquals,
             onClear = engine::onClear,
-            onClearEntry = engine::onClearEntry,
             onBackspace = engine::onBackspace,
             onDecimal = engine::onDecimal,
             onPercent = engine::onPercent,

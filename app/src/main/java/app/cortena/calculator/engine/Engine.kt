@@ -160,13 +160,6 @@ class Engine {
         operatorJustPressed = false
     }
 
-    /** Clear entry — resets display and active operator, keeping nothing. */
-    fun onClearEntry() {
-        state = State()
-        evaluated = false
-        operatorJustPressed = false
-    }
-
     fun onBackspace() {
         if (evaluated) {
             onClear()

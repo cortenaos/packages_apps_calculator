@@ -25,11 +25,6 @@ import framework.cortena.ui.components.TextRole
 import framework.cortena.ui.theme.LocalColors
 import framework.cortena.ui.theme.LocalSpacing
 
-// TODO: CortenaUI Framework Gap — AutoSizeText
-//  The display uses manual font-size calculation via TextMeasurer.
-//  A framework-level AutoSizeText composable would encapsulate this pattern
-//  and be reusable across all CortenaOS apps that need adaptive text sizing.
-
 /**
  * Calculator display panel — the top portion of the screen showing the expression history
  * (secondary) and the current value (primary).
@@ -93,7 +88,7 @@ fun Display(expression: String, display: String, modifier: Modifier = Modifier) 
  */
 @Composable
 private fun AutoSizeDisplay(text: String, color: Color, modifier: Modifier = Modifier) {
-    val maxFontSizeSp = 67.38f
+    val maxFontSizeSp = 76.04f // Calculated as: DisplaySmall * (categoryScaleRatio ^ 2)
     val minFontSizeSp = 24f
     val stepFactor = 0.9f
 

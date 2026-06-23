@@ -10,14 +10,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import framework.cortena.icons.PhosphorIcon
+import framework.cortena.icons.PhosphorIcons
 import framework.cortena.ui.components.Button
 import framework.cortena.ui.components.ButtonStyle
 import framework.cortena.ui.components.ButtonVariant
@@ -33,21 +33,6 @@ import framework.cortena.ui.theme.LocalSpacing
 //  which is the standard Compose primitive. A CortenaUI `Grid` composable
 //  with built-in spacing token integration would reduce boilerplate for
 //  grid-based layouts (calculators, keyboards, settings grids, icon grids).
-
-// TODO: CortenaUI Framework Gap — Button.shape Parameter
-//  Calculator keys would ideally use RoundedShape(12.dp) instead of the
-//  default CapsuleShape. Currently Button's shape is locked. Adding an
-//  optional `shape: ComponentShape = CapsuleShape()` parameter would let
-//  consumers adapt Button for grid-based layouts without losing the press
-//  physics, highlight, and content scaling. For now, the capsule shape
-//  actually works well for the minimalist aesthetic we're targeting.
-
-// TODO: CortenaUI Framework Gap — Haptic Feedback API
-//  Calculator keys should produce light haptic feedback on press.
-//  CortenaUI's Button has DampedAnimation for visual feedback but no
-//  framework-level haptic coordination. A `LocalHaptics` CompositionLocal
-//  or a `hapticFeedback` parameter on interactive components would let
-//  the OS enforce consistent tactile language across all apps.
 
 /**
  * Calculator button grid — the bottom portion of the screen.
@@ -87,7 +72,6 @@ fun Keypad(
     onOperator: (Char) -> Unit,
     onEquals: () -> Unit,
     onClear: () -> Unit,
-    onClearEntry: () -> Unit,
     onBackspace: () -> Unit,
     onDecimal: () -> Unit,
     onPercent: () -> Unit,
@@ -100,7 +84,7 @@ fun Keypad(
     val gap = spacing.Sm.dp
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(gap)) {
-        // Row 1: ⌫, AC/C, %, ÷
+        // Row 1: ⌫, AC, %, ÷
         KeyRow(gap) {
             Button(
                 onClick = onBackspace,
@@ -109,13 +93,14 @@ fun Keypad(
                 modifier = Modifier.weight(1f).aspectRatio(1f),
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Backspace,
+                    renderer = PhosphorIcon(PhosphorIcons.Regular.Backspace),
                     contentDescription = "Backspace",
+                    size = 48.dp,
                 )
             }
             UtilityKey(
-                label = if (hasInput) "C" else "AC",
-                onClick = if (hasInput) onClearEntry else onClear,
+                label = "AC",
+                onClick = onClear,
                 modifier = Modifier.weight(1f),
             )
             UtilityKey(label = "%", onClick = onPercent, modifier = Modifier.weight(1f))
@@ -170,14 +155,15 @@ fun Keypad(
         KeyRow(gap) {
             Button(
                 onClick = onNegate,
+                iconOnly = true,
                 style = ButtonStyle.Secondary,
                 variant = ButtonVariant.Soft,
                 modifier = Modifier.weight(1f).aspectRatio(1f),
             ) {
-                Text(
-                    text = "+/−",
-                    role = TextRole.HeadlineLarge,
-                    style = TextStyle(fontWeight = FontWeight(400)),
+                Icon(
+                    renderer = PhosphorIcon(PhosphorIcons.Regular.PlusMinus),
+                    contentDescription = "Plus Minus",
+                    size = 48.dp,
                 )
             }
             NumberKey(digit = '0', onClick = onDigit, modifier = Modifier.weight(1f))
@@ -207,6 +193,7 @@ private fun NumberKey(digit: Char, onClick: (Char) -> Unit, modifier: Modifier =
         onClick = { onClick(digit) },
         style = ButtonStyle.Secondary,
         variant = ButtonVariant.Soft,
+        iconOnly = true,
         modifier = modifier.aspectRatio(1f),
     ) {
         Text(
@@ -236,6 +223,7 @@ private fun OperatorKey(
         foreground =
             if (isActive) androidx.compose.ui.graphics.Color(colors.accent)
             else androidx.compose.ui.graphics.Color.Unspecified,
+        iconOnly = true,
         modifier = modifier.aspectRatio(1f),
     ) {
         Text(
@@ -249,7 +237,12 @@ private fun OperatorKey(
 /** Utility key (AC, %): Secondary Soft — present but not dominant. */
 @Composable
 private fun UtilityKey(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(onClick = onClick, style = ButtonStyle.Ghost, modifier = modifier.aspectRatio(1f)) {
+    Button(
+        onClick = onClick,
+        style = ButtonStyle.Ghost,
+        iconOnly = true,
+        modifier = modifier.aspectRatio(1f),
+    ) {
         Text(
             text = label,
             role = TextRole.DisplayMedium,
