@@ -30,42 +30,42 @@ import framework.cortena.ui.size.SizeToken
 import framework.cortena.ui.theme.LocalColors
 import framework.cortena.ui.theme.LocalSpacing
 
-// TODO: CortenaUI Framework Gap ? Grid Layout Abstraction
+// TODO: CortenaUI Framework Gap — Grid Layout Abstraction
 //  The 4-column calculator keypad is built with nested Row/Column + weight,
 //  which is the standard Compose primitive. A CortenaUI `Grid` composable
 //  with built-in spacing token integration would reduce boilerplate for
 //  grid-based layouts (calculators, keyboards, settings grids, icon grids).
 
 /**
- * Calculator button grid ? the bottom portion of the screen.
+ * Calculator button grid — the bottom portion of the screen.
  *
  * ## CortenaUI Validation Points
- * - **Button styles**: Validates all relevant [ButtonStyle] variants in a dense layout ?
+ * - **Button styles**: Validates all relevant [ButtonStyle] variants in a dense layout —
  *   [ButtonStyle.Ghost] (number keys), [ButtonStyle.Accent] (operators),
  *   [ButtonStyle.Secondary] + [ButtonVariant.Soft] (utility keys), [ButtonStyle.Primary] (equals).
- * - **Button sizing**: Uses [SizeToken.Large] for comfortable touch targets in a grid context ?
+ * - **Button sizing**: Uses [SizeToken.Large] for comfortable touch targets in a grid context —
  *   validates that the size tier system produces appropriate proportions for non-list button
  *   layouts.
- * - **Spacing tokens**: [LocalSpacing] `Sm` (8dp) for both horizontal and vertical gaps ? validates
+ * - **Spacing tokens**: [LocalSpacing] `Sm` (8dp) for both horizontal and vertical gaps — validates
  *   that the 4dp grid produces comfortable grid spacing.
- * - **Icon inside Button**: The backspace key places a Material [Icon] inside [Button] ? validates
+ * - **Icon inside Button**: The backspace key places a Material [Icon] inside [Button] — validates
  *   the content-scaling contract (icon auto-sizes to the button's tier).
- * - **Dynamic label**: AC/C toggles based on [hasInput] ? validates that stateful label changes
+ * - **Dynamic label**: AC/C toggles based on [hasInput] — validates that stateful label changes
  *   integrate cleanly with CortenaUI's Button recomposition.
  *
  * Layout:
  * ```
- * ?????????????????????????????
- * ?  ?   ?  AC  ?   %  ?   ?  ?
- * ?????????????????????????????
- * ?  7   ?  8   ?   9  ?   ?  ?
- * ?????????????????????????????
- * ?  4   ?  5   ?   6  ?   ?  ?
- * ?????????????????????????????
- * ?  1   ?  2   ?   3  ?   +  ?
- * ?????????????????????????????
- * ? +/-  ?  0   ?   ,  ?   =  ?
- * ?????????????????????????????
+ * ┌──────┬──────┬──────┬──────┐
+ * │  ⌫   │  AC  │   %  │   ÷  │
+ * ├──────┼──────┼──────┼──────┤
+ * │  7   │  8   │   9  │   ×  │
+ * ├──────┼──────┼──────┼──────┤
+ * │  4   │  5   │   6  │   −  │
+ * ├──────┼──────┼──────┼──────┤
+ * │  1   │  2   │   3  │   +  │
+ * ├──────┼──────┼──────┼──────┤
+ * │ +/-  │  0   │   ,  │   =  │
+ * └──────┴──────┴──────┴──────┘
  * ```
  */
 @Composable
@@ -86,7 +86,7 @@ fun Keypad(
     val gap = spacing.Sm.dp
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(gap)) {
-        // Row 1: ?, AC, %, ?
+        // Row 1: ⌫, AC, %, ÷
         KeyRow(gap) {
             Button(
                 onClick = onBackspace,
@@ -124,13 +124,13 @@ fun Keypad(
                         size = 48.dp,
                     )
                 },
-                onClick = { onOperator('�') },
-                isActive = activeOperator == '�',
+                onClick = { onOperator('÷') },
+                isActive = activeOperator == '÷',
                 modifier = Modifier.weight(1f),
             )
         }
 
-        // Row 2: 7, 8, 9, �
+        // Row 2: 7, 8, 9, ×
         KeyRow(gap) {
             NumberKey(digit = '7', onClick = onDigit, modifier = Modifier.weight(1f))
             NumberKey(digit = '8', onClick = onDigit, modifier = Modifier.weight(1f))
@@ -143,13 +143,13 @@ fun Keypad(
                         size = 48.dp,
                     )
                 },
-                onClick = { onOperator('�') },
-                isActive = activeOperator == '�',
+                onClick = { onOperator('×') },
+                isActive = activeOperator == '×',
                 modifier = Modifier.weight(1f),
             )
         }
 
-        // Row 3: 4, 5, 6, ?
+        // Row 3: 4, 5, 6, -
         KeyRow(gap) {
             NumberKey(digit = '4', onClick = onDigit, modifier = Modifier.weight(1f))
             NumberKey(digit = '5', onClick = onDigit, modifier = Modifier.weight(1f))
@@ -232,7 +232,7 @@ private fun KeyRow(gap: Dp, content: @Composable RowScope.() -> Unit) {
     )
 }
 
-/** Number key: Ghost style ? subdued background, lets the digit stand out. */
+/** Number key: Ghost style — subdued background, lets the digit stand out. */
 @Composable
 private fun NumberKey(digit: Char, onClick: (Char) -> Unit, modifier: Modifier = Modifier) {
     Button(
@@ -250,7 +250,7 @@ private fun NumberKey(digit: Char, onClick: (Char) -> Unit, modifier: Modifier =
     }
 }
 
-/** Operator key: Accent style ? visually prominent, draws the eye. Swaps fg/bg when active. */
+/** Operator key: Accent style — visually prominent, draws the eye. Swaps fg/bg when active. */
 @Composable
 private fun OperatorKey(
     icon: @Composable () -> Unit,
@@ -272,7 +272,7 @@ private fun OperatorKey(
     }
 }
 
-/** Utility key (AC, %): Secondary Soft ? present but not dominant. */
+/** Utility key (AC, %): Secondary Soft — present but not dominant. */
 @SuppressLint("ModifierParameter")
 @Composable
 private fun UtilityKey(
