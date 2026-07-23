@@ -1,0 +1,13 @@
+android_app {
+    name: "Calculator",
+
+    product_specific: true,
+
+    sdk_version: "current",
+
+    resource_dirs: ["res"],
+    srcs: ["src/**/*.kt"],
+
+    static_libs: [
+    ],
+}
